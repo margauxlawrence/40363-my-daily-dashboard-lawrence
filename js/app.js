@@ -101,7 +101,7 @@ function loadWeather() {
         })
         .then(data => {
             console.log('✅ Weather data loaded:', data);
-            displayWeather(data);
+            displayWeather(data);  // now receives full object with current + forecast
         })
         .catch(error => {
             console.error('❌ Error loading weather:', error);
@@ -110,37 +110,80 @@ function loadWeather() {
 }
 
 // Function to display weather data in the DOM
-function displayWeather(weather) {
+function displayWeather(weatherData) {
     console.log('📊 Displaying weather data...');
 
     const weatherDisplay = document.getElementById('weather-display');
 
+    // Clear container and rebuild structure
     weatherDisplay.innerHTML = `
+        <div id="weather-current"></div>
+        <div id="weather-forecast"></div>
+    `;
+
+    // Render current + 3-day forecast
+    renderCurrentWeather(weatherData.current);
+    renderForecast(weatherData.forecast);
+}
+
+// --- NEW: Render current weather ---
+function renderCurrentWeather(current) {
+    const currentEl = document.getElementById('weather-current');
+
+    currentEl.innerHTML = `
         <div class="weather-current">
-            <div class="weather-icon">${weather.icon}</div>
-            <div class="weather-temp">${weather.temperature}°F</div>
-            <div class="weather-location">${weather.location}</div>
-            <div class="weather-condition">${weather.condition}</div>
+            <div class="weather-icon">${current.icon}</div>
+            <div class="weather-temp">${current.temperature}°F</div>
+            <div class="weather-location">${current.location}</div>
+            <div class="weather-condition">${current.condition}</div>
         </div>
+
         <div class="weather-details">
             <div class="weather-detail">
                 <span>💧 Humidity</span>
-                <strong>${weather.humidity}%</strong>
+                <strong>${current.humidity}%</strong>
             </div>
             <div class="weather-detail">
                 <span>💨 Wind Speed</span>
-                <strong>${weather.windSpeed} mph</strong>
+                <strong>${current.wind} mph</strong>
             </div>
             <div class="weather-detail">
                 <span>🌡️ Feels Like</span>
-                <strong>${weather.feelsLike}°F</strong>
+                <strong>${current.feelsLike}°F</strong>
             </div>
         </div>
-
-
     `;
+}
 
-    console.log('✅ Weather displayed successfully!');
+// --- NEW: Render 3-Day Forecast ---
+function renderForecast(forecastArray) {
+    const forecastEl = document.getElementById('weather-forecast');
+
+    if (!forecastArray || forecastArray.length === 0) {
+        forecastEl.innerHTML = "<p>No forecast data available.</p>";
+        return;
+    }
+
+    const forecastHTML = forecastArray
+        .map(day => {
+            return `
+                <div class="forecast-day">
+                    <div class="forecast-icon">${day.icon}</div>
+                    <div class="forecast-day-name">${day.day}</div>
+                    <div class="forecast-condition">${day.condition}</div>
+                    <div class="forecast-temps">
+                        High: ${day.high}° · Low: ${day.low}°
+                    </div>
+                </div>
+            `;
+        })
+        .join("");
+
+    forecastEl.innerHTML = `
+        <div class="weather-forecast">
+            ${forecastHTML}
+        </div>
+    `;
 }
 
 // Function to show error message if weather data fails to load
