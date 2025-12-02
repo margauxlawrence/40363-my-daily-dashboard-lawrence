@@ -53,6 +53,43 @@ function setupThemeToggle() {
 initializeTheme();
 setupThemeToggle();
 
+// -----------------------------
+// WELCOME MESSAGE FEATURE
+// -----------------------------
+
+function loadUserName() {
+  let name = localStorage.getItem("userName");
+
+  // If no name stored, ask the user
+  if (!name) {
+    name = prompt("Welcome! What is your name?");
+    if (name && name.trim() !== "") {
+      localStorage.setItem("userName", name.trim());
+    } else {
+      name = "Guest"; // fallback
+    }
+  }
+
+  updateWelcomeMessage(name);
+}
+
+function updateWelcomeMessage(name) {
+  const welcomeEl = document.getElementById("welcome-message");
+  welcomeEl.textContent = `Welcome back, ${name}!`;
+}
+
+document.getElementById("change-name-btn").addEventListener("click", () => {
+  const newName = prompt("Enter your name:");
+
+  if (newName && newName.trim() !== "") {
+    localStorage.setItem("userName", newName.trim());
+    updateWelcomeMessage(newName.trim());
+  }
+});
+
+// Run on page load
+loadUserName();
+
 // Function to load weather data
 function loadWeather() {
     console.log('🌤️ Loading weather data...');

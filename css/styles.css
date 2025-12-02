@@ -92,6 +92,13 @@ header {
 
 header h1 {
     color: var(--color-text-dark);
+    margin-bottom: 10px; /* space under the text */
+    letter-spacing: 0.5px; 
+}
+
+header p {
+  margin-bottom: 5px; /* adjust amount as needed */
+  line-height: 1.2; /* optional: makes paragraphs easier to read */
 }
 
 .header-content {
@@ -100,6 +107,7 @@ header h1 {
   align-items: center;
   max-width: 1400px;
   margin: 0 auto;
+  gap: 20px; 
 }
 
 .theme-toggle {
@@ -122,6 +130,38 @@ header h1 {
 
 .theme-icon {
   font-size: 24px;
+}
+
+
+#change-name-btn {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: 
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.1s ease;
+}
+
+#change-name-btn:hover {
+  background: var(--color-bg-white);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  transform: translateY(-1px);
+}
+
+#change-name-btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 @media (max-width: 768px) {
@@ -202,7 +242,7 @@ r-current {
 
 .weather-details {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     padding-top: 15px;
     border-top: 1px solid var(--color-border);
     margin-top: 15px;
