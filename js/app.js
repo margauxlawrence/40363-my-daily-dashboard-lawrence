@@ -8,7 +8,6 @@ console.log('LAB16: Learning fetch() API');
 
 // Theme Management
 function initializeTheme() {
-  // Check for saved theme preference
   const savedTheme = localStorage.getItem('dashboardTheme');
 
   if (savedTheme === 'dark') {
@@ -21,35 +20,22 @@ function initializeTheme() {
 
 function toggleTheme() {
   const isDark = document.body.classList.toggle('theme-dark');
-
-  // Save preference
   localStorage.setItem('dashboardTheme', isDark ? 'dark' : 'light');
-
-  // Update icon
   updateThemeIcon(isDark ? 'dark' : 'light');
-
-  console.log('Theme switched to:', isDark ? 'dark' : 'light');
 }
 
 function updateThemeIcon(theme) {
   const themeIcon = document.querySelector('.theme-icon');
-
-  if (theme === 'dark') {
-    themeIcon.textContent = '☀️'; // Sun for dark mode (to switch to light)
-  } else {
-    themeIcon.textContent = '🌙'; // Moon for light mode (to switch to dark)
-  }
+  themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
 }
 
 function setupThemeToggle() {
   const themeToggleBtn = document.getElementById('theme-toggle');
-
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener('click', toggleTheme);
   }
 }
 
-// Call these when page loads
 initializeTheme();
 setupThemeToggle();
 
@@ -60,13 +46,12 @@ setupThemeToggle();
 function loadUserName() {
   let name = localStorage.getItem("userName");
 
-  // If no name stored, ask the user
   if (!name) {
     name = prompt("Welcome! What is your name?");
     if (name && name.trim() !== "") {
       localStorage.setItem("userName", name.trim());
     } else {
-      name = "Guest"; // fallback
+      name = "Guest";
     }
   }
 
@@ -74,167 +59,129 @@ function loadUserName() {
 }
 
 function updateWelcomeMessage(name) {
-  const welcomeEl = document.getElementById("welcome-message");
-  welcomeEl.textContent = `Welcome back, ${name}!`;
+  document.getElementById("welcome-message").textContent =
+    `Welcome back, ${name}!`;
 }
 
 document.getElementById("change-name-btn").addEventListener("click", () => {
   const newName = prompt("Enter your name:");
-
   if (newName && newName.trim() !== "") {
     localStorage.setItem("userName", newName.trim());
     updateWelcomeMessage(newName.trim());
   }
 });
 
-// Run on page load
 loadUserName();
 
-// Function to load weather data
+// ========================================
+// WEATHER WIDGET
+// ========================================
+
 function loadWeather() {
-    console.log('🌤️ Loading weather data...');
-
-    fetch('./data/weather.json')
-        .then(response => {
-            console.log('✅ Got response:', response);
-            return response.json();
-        })
-        .then(data => {
-            console.log('✅ Weather data loaded:', data);
-            displayWeather(data);  // now receives full object with current + forecast
-        })
-        .catch(error => {
-            console.error('❌ Error loading weather:', error);
-            displayWeatherError();
-        });
+  fetch('./data/weather.json')
+    .then(response => response.json())
+    .then(data => displayWeather(data))
+    .catch(error => {
+      console.error('Error loading weather:', error);
+      displayWeatherError();
+    });
 }
 
-// Function to display weather data in the DOM
 function displayWeather(weatherData) {
-    console.log('📊 Displaying weather data...');
+  const weatherDisplay = document.getElementById('weather-display');
 
-    const weatherDisplay = document.getElementById('weather-display');
+  weatherDisplay.innerHTML = `
+    <div id="weather-current"></div>
+    <div id="weather-forecast"></div>
+  `;
 
-    // Clear container and rebuild structure
-    weatherDisplay.innerHTML = `
-        <div id="weather-current"></div>
-        <div id="weather-forecast"></div>
-    `;
-
-    // Render current + 3-day forecast
-    renderCurrentWeather(weatherData.current);
-    renderForecast(weatherData.forecast);
+  renderCurrentWeather(weatherData.current);
+  renderForecast(weatherData.forecast);
 }
 
-// --- NEW: Render current weather ---
 function renderCurrentWeather(current) {
-    const currentEl = document.getElementById('weather-current');
+  const currentEl = document.getElementById('weather-current');
 
-    currentEl.innerHTML = `
-        <div class="weather-current">
-            <div class="weather-icon">${current.icon}</div>
-            <div class="weather-temp">${current.temperature}°F</div>
-            <div class="weather-location">${current.location}</div>
-            <div class="weather-condition">${current.condition}</div>
-        </div>
+  currentEl.innerHTML = `
+    <div class="weather-current">
+        <div class="weather-icon">${current.icon}</div>
+        <div class="weather-temp">${current.temperature}°F</div>
+        <div class="weather-location">${current.location}</div>
+        <div class="weather-condition">${current.condition}</div>
+    </div>
 
-        <div class="weather-details">
-            <div class="weather-detail">
-                <span>💧 Humidity</span>
-                <strong>${current.humidity}%</strong>
-            </div>
-            <div class="weather-detail">
-                <span>💨 Wind Speed</span>
-                <strong>${current.wind} mph</strong>
-            </div>
-            <div class="weather-detail">
-                <span>🌡️ Feels Like</span>
-                <strong>${current.feelsLike}°F</strong>
-            </div>
+    <div class="weather-details">
+        <div class="weather-detail">
+            <span>💧 Humidity</span>
+            <strong>${current.humidity}%</strong>
         </div>
-    `;
+        <div class="weather-detail">
+            <span>💨 Wind Speed</span>
+            <strong>${current.wind} mph</strong>
+        </div>
+        <div class="weather-detail">
+            <span>🌡️ Feels Like</span>
+            <strong>${current.feelsLike}°F</strong>
+        </div>
+    </div>
+  `;
 }
 
-// --- NEW: Render 3-Day Forecast ---
 function renderForecast(forecastArray) {
-    const forecastEl = document.getElementById('weather-forecast');
+  const forecastEl = document.getElementById('weather-forecast');
 
-    if (!forecastArray || forecastArray.length === 0) {
-        forecastEl.innerHTML = "<p>No forecast data available.</p>";
-        return;
-    }
+  if (!forecastArray || forecastArray.length === 0) {
+    forecastEl.innerHTML = "<p>No forecast available.</p>";
+    return;
+  }
 
-    const forecastHTML = forecastArray
-        .map(day => {
-            return `
-                <div class="forecast-day">
-                    <div class="forecast-icon">${day.icon}</div>
-                    <div class="forecast-day-name">${day.day}</div>
-                    <div class="forecast-condition">${day.condition}</div>
-                    <div class="forecast-temps">
-                        High: ${day.high}° · Low: ${day.low}°
-                    </div>
-                </div>
-            `;
-        })
-        .join("");
+  const forecastHTML = forecastArray.map(day => `
+      <div class="forecast-day">
+          <div class="forecast-icon">${day.icon}</div>
+          <div class="forecast-day-name">${day.day}</div>
+          <div class="forecast-condition">${day.condition}</div>
+          <div class="forecast-temps">High: ${day.high}° · Low: ${day.low}°</div>
+      </div>
+  `).join("");
 
-    forecastEl.innerHTML = `
-        <div class="weather-forecast">
-            ${forecastHTML}
-        </div>
-    `;
+  forecastEl.innerHTML = `<div class="weather-forecast">${forecastHTML}</div>`;
 }
 
-// Function to show error message if weather data fails to load
 function displayWeatherError() {
-    const weatherDisplay = document.getElementById('weather-display');
-
-    weatherDisplay.innerHTML = `
-        <div class="error-message">
-            <div class="error-icon">⚠️</div>
-            <p>Could not load weather data</p>
-            <p class="error-hint">Check console for details</p>
-        </div>
-    `;
+  document.getElementById('weather-display').innerHTML = `
+    <div class="error-message">
+        <div class="error-icon">⚠️</div>
+        <p>Could not load weather data</p>
+        <p class="error-hint">Check console for details</p>
+    </div>
+  `;
 }
 
-// Load weather data when page loads
 loadWeather();
 
-// Global variable to store all quotes
+// ========================================
+// QUOTES WIDGET
+// ========================================
+
 let allQuotes = [];
-let currentQuoteIndex = -1; // Track current quote to avoid repeats
+let currentQuoteIndex = -1;
 
-// Function to load quotes from JSON
 function loadQuotes() {
-  console.log('Loading quotes...');
-
   fetch('data/quotes.json')
-    .then(response => {
-      console.log('Got quotes response:', response);
-      return response.json();
-    })
+    .then(r => r.json())
     .then(data => {
-      console.log('Quotes data:', data);
-      allQuotes = data; // Store quotes in global variable
-      displayRandomQuote(); // Show first quote
+      allQuotes = data;
+      displayRandomQuote();
     })
     .catch(error => {
-      console.error('Error loading quotes:', error);
+      console.error('Quotes error:', error);
       displayQuotesError();
     });
 }
 
-// Function to display a random quote
 function displayRandomQuote() {
-  // Make sure we have quotes loaded
-  if (allQuotes.length === 0) {
-    console.error('No quotes available');
-    return;
-  }
+  if (allQuotes.length === 0) return;
 
-  // Get random index (different from current)
   let randomIndex;
   do {
     randomIndex = Math.floor(Math.random() * allQuotes.length);
@@ -243,109 +190,94 @@ function displayRandomQuote() {
   currentQuoteIndex = randomIndex;
   const quote = allQuotes[randomIndex];
 
-  // Display the quote
-  const quotesDisplay = document.getElementById('quotes-display');
-  quotesDisplay.innerHTML = `
+  document.getElementById('quotes-display').innerHTML = `
     <div class="quote-card">
       <div class="quote-text">"${quote.text}"</div>
       <div class="quote-author">— ${quote.author}</div>
     </div>
   `;
-
-  console.log('Displayed quote:', quote);
 }
 
-// Function to show error message
 function displayQuotesError() {
-  const quotesDisplay = document.getElementById('quotes-display');
-  quotesDisplay.innerHTML = `
-    <div class="error-message">
-      ⚠️ Could not load quotes
-    </div>
-  `;
+  document.getElementById('quotes-display').innerHTML =
+    `<div class="error-message">⚠️ Could not load quotes</div>`;
 }
 
-// Call loadQuotes when page loads
 loadQuotes();
 
-// Set up "New Quote" button
 function setupQuotesButton() {
-  const newQuoteBtn = document.getElementById('new-quote-btn');
-
-  newQuoteBtn.addEventListener('click', () => {
-    console.log('New quote button clicked!');
-    displayRandomQuote();
-  });
+  document.getElementById('new-quote-btn')
+    .addEventListener('click', displayRandomQuote);
 }
 
-// Call setupQuotesButton after DOM is loaded
 setupQuotesButton();
 
 // ========================================
-// TASKS WIDGET (from LAB18)
+// TASKS WIDGET (NOW WITH CATEGORY + DUE DATE)
 // ========================================
 
-// Function to load tasks from localStorage
 function loadTasks() {
   const tasksJSON = localStorage.getItem('dashboardTasks');
-
-  if (tasksJSON) {
-    return JSON.parse(tasksJSON);
-  } else {
-    return []; // Return empty array if no tasks yet
-  }
+  return tasksJSON ? JSON.parse(tasksJSON) : [];
 }
 
-// Function to save tasks to localStorage
 function saveTasks(tasks) {
   localStorage.setItem('dashboardTasks', JSON.stringify(tasks));
-  console.log('Tasks saved:', tasks);
 }
 
-// Function to display all tasks
 function displayTasks() {
   const tasks = loadTasks();
   const tasksList = document.getElementById('tasks-list');
 
-  // If no tasks, show message
   if (tasks.length === 0) {
-    tasksList.innerHTML = `
-      <div class="no-tasks">
-        No tasks yet. Add one above! ✨
-      </div>
-    `;
+    tasksList.innerHTML = `<div class="no-tasks">No tasks yet. Add one above! ✨</div>`;
     updateTaskStats(tasks);
     return;
   }
 
-  // Clear existing tasks
   tasksList.innerHTML = '';
 
-  // Display each task
   tasks.forEach((task, index) => {
     const taskItem = document.createElement('div');
     taskItem.className = `task-item ${task.completed ? 'completed' : ''}`;
 
-    // Create checkbox
+    // Overdue highlighting
+    if (task.dueDate && new Date(task.dueDate) < new Date()) {
+      taskItem.classList.add('overdue');
+    }
+
+    // Checkbox
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = task.completed;
     checkbox.addEventListener('change', () => toggleTask(index));
 
-    // Create task text
+    // Task text
     const taskText = document.createElement('span');
     taskText.className = 'task-text';
     taskText.textContent = task.text;
 
-    // Create delete button
+    // Category badge
+    const categoryBadge = document.createElement('span');
+    categoryBadge.className = `task-category ${task.category}`;
+    categoryBadge.textContent = task.category;
+
+    // Due date
+    const dueDate = document.createElement('span');
+    dueDate.className = 'task-date';
+    dueDate.textContent = task.dueDate ? `Due: ${task.dueDate}` : 'No due date';
+
+    // Delete button
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'btn-delete';
     deleteBtn.textContent = 'Delete';
     deleteBtn.addEventListener('click', () => deleteTask(index));
 
-    // Append all elements to task item
+    // Append children
     taskItem.appendChild(checkbox);
     taskItem.appendChild(taskText);
+    taskItem.appendChild(categoryBadge);
+    taskItem.appendChild(dueDate);
     taskItem.appendChild(deleteBtn);
 
     tasksList.appendChild(taskItem);
@@ -354,90 +286,74 @@ function displayTasks() {
   updateTaskStats(tasks);
 }
 
-// Function to add a new task
 function addTask(taskText) {
   const tasks = loadTasks();
 
   const newTask = {
     text: taskText,
     completed: false,
-    id: Date.now() // Unique ID using timestamp
+    id: Date.now(),
+    category: document.getElementById('task-category').value,
+    dueDate: document.getElementById('task-date').value
   };
 
   tasks.push(newTask);
   saveTasks(tasks);
   displayTasks();
-
-  console.log('Task added:', newTask);
 }
 
-// Set up form submission
 function setupTaskForm() {
   const taskForm = document.getElementById('task-form');
   const taskInput = document.getElementById('task-input');
 
   taskForm.addEventListener('submit', (e) => {
-    e.preventDefault(); // Prevent page reload
-
+    e.preventDefault();
     const taskText = taskInput.value.trim();
-
     if (taskText) {
       addTask(taskText);
-      taskInput.value = ''; // Clear input
-      taskInput.focus(); // Focus back on input
+      taskInput.value = '';
+      taskInput.focus();
     }
   });
 }
 
-// Function to toggle task complete/incomplete
 function toggleTask(index) {
   const tasks = loadTasks();
   tasks[index].completed = !tasks[index].completed;
   saveTasks(tasks);
   displayTasks();
-
-  console.log('Task toggled:', tasks[index]);
 }
 
-// Function to delete a task
 function deleteTask(index) {
   const tasks = loadTasks();
-  const taskToDelete = tasks[index];
-
-  // Optional: Confirm before deleting
-  if (confirm(`Delete task: "${taskToDelete.text}"?`)) {
+  if (confirm(`Delete task: "${tasks[index].text}"?`)) {
     tasks.splice(index, 1);
     saveTasks(tasks);
     displayTasks();
-
-    console.log('Task deleted');
   }
 }
 
-// Function to update task statistics
 function updateTaskStats(tasks) {
   const statsDiv = document.getElementById('task-stats');
 
-  const totalTasks = tasks.length;
-  const completedTasks = tasks.filter(task => task.completed).length;
-  const pendingTasks = totalTasks - completedTasks;
+  const total = tasks.length;
+  const completed = tasks.filter(t => t.completed).length;
+  const pending = total - completed;
 
-  if (totalTasks === 0) {
+  if (total === 0) {
     statsDiv.innerHTML = '';
     return;
   }
 
-  const completionPercentage = Math.round((completedTasks / totalTasks) * 100);
+  const percentage = Math.round((completed / total) * 100);
 
   statsDiv.innerHTML = `
-    <div class="stat">Total: <strong>${totalTasks}</strong></div>
-    <div class="stat">Completed: <strong>${completedTasks}</strong></div>
-    <div class="stat">Pending: <strong>${pendingTasks}</strong></div>
-    <div class="stat">Progress: <strong>${completionPercentage}%</strong></div>
+    <div class="stat">Total: <strong>${total}</strong></div>
+    <div class="stat">Completed: <strong>${completed}</strong></div>
+    <div class="stat">Pending: <strong>${pending}</strong></div>
+    <div class="stat">Progress: <strong>${percentage}%</strong></div>
   `;
 }
 
-// Initialize tasks when page loads
 displayTasks();
 setupTaskForm();
-
