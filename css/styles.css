@@ -70,10 +70,12 @@ body.theme-dark {
   --color-secondary: #2d3748;
 }
 
+/* Global Reset */
+
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
@@ -84,21 +86,25 @@ body {
   color: var(--color-text-dark);
 }
 
+/* Header */
+
 header {
-    text-align: center;
-    margin-top: 30px;
-    margin-bottom: 30px;
+  text-align: center;
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 header h1 {
-    color: var(--color-text-dark);
-    margin-bottom: 10px; /* space under the text */
-    letter-spacing: 0.5px; 
+  color: var(--color-text-dark);
 }
 
 header p {
-  margin-bottom: 5px; /* adjust amount as needed */
-  line-height: 1.2; /* optional: makes paragraphs easier to read */
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+header p:last-of-type {
+  margin-bottom: 0;
 }
 
 .header-content {
@@ -107,8 +113,16 @@ header p {
   align-items: center;
   max-width: 1400px;
   margin: 0 auto;
-  gap: 20px; 
+  gap: 20px;
 }
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Theme Toggle */
 
 .theme-toggle {
   background: rgba(255, 255, 255, 0.2);
@@ -132,6 +146,7 @@ header p {
   font-size: 24px;
 }
 
+/* Change Name Button */
 
 #change-name-btn {
   padding: 8px 14px;
@@ -145,7 +160,7 @@ header p {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: 
+  transition:
     background 0.2s ease,
     color 0.2s ease,
     border-color 0.2s ease,
@@ -171,6 +186,8 @@ header p {
   }
 }
 
+/* Dashboard Layout */
+
 .dashboard {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -189,9 +206,9 @@ header p {
 }
 
 .widgets-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--space-md);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-md);
 }
 
 .widget {
@@ -203,96 +220,97 @@ header p {
 }
 
 .widget h2 {
-    margin-bottom: 15px;
-    color: var(--color-text-dark);
-    font-size: 1.2em;
-    border-bottom: 2px solid var(--color-border);
+  margin-bottom: 15px;
+  color: var(--color-text-dark);
+  font-size: 1.2em;
+  border-bottom: 2px solid var(--color-border);
 }
 
-/* Weather Widget Styles */
+/* ===========================
+   Weather Widget Styles
+   =========================== */
 
-/* FIXED TYPO: r-current → .weather-current */
 .weather-current {
-    text-align: center;
-    margin-bottom: 20px;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .weather-icon {
-    font-size: 64px;
-    margin-bottom: 10px;
+  font-size: 64px;
+  margin-bottom: 10px;
 }
 
 .weather-temp {
-    font-size: 48px;
-    font-weight: bold;
-    color: var(--color-text-dark);
-    margin: 10px 0;
+  font-size: 48px;
+  font-weight: bold;
+  color: var(--color-text-dark);
+  margin: 10px 0;
 }
 
 .weather-location {
-    font-size: 18px;
-    color: var(--color-text-muted);
-    margin: 5px 0;
+  font-size: 18px;
+  color: var(--color-text-muted);
+  margin: 5px 0;
 }
 
 .weather-condition {
-    font-size: 16px;
-    color: var(--color-text-muted);
-    font-weight: 500;
+  font-size: 16px;
+  color: var(--color-text-muted);
+  font-weight: 500;
 }
 
-/* ⭐ UPDATED: even spacing for humidity / wind / feels like */
+/* Evenly spaced detail row */
 .weather-details {
-    display: flex;
-    justify-content: space-between; /* evenly space items */
-    align-items: center;
-    padding-top: 15px;
-    border-top: 1px solid var(--color-border);
-    margin-top: 20px;
-    gap: 15px; /* consistent spacing */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 15px;
+  border-top: 1px solid var(--color-border);
+  margin-top: 20px;
+  gap: 15px;
 }
 
-/* ⭐ UPDATED: equal-width columns */
 .weather-detail {
-    flex: 1;            /* make all 3 sections the same width */
-    text-align: center; /* centered content */
+  flex: 1;
+  text-align: center;
 }
 
 .weather-detail span {
-    display: block;
-    font-size: 14px;
-    color: var(--color-text-muted);
-    margin-bottom: 5px;
+  display: block;
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin-bottom: 5px;
 }
 
 .weather-detail strong {
-    font-size: 18px;
-    color: var(--color-text-dark);
+  font-size: 18px;
+  color: var(--color-text-dark);
 }
 
 /* Error Message Styles */
 .error-message {
-    text-align: center;
-    padding: var(--space-md);
+  text-align: center;
+  padding: var(--space-md);
 }
 
 .error-icon {
-    font-size: 48px;
-    margin-bottom: 10px;
+  font-size: 48px;
+  margin-bottom: 10px;
 }
 
 .error-message p {
-    color: var(--color-error);
-    font-size: var(--font-size-base);
-    margin: 5px 0;
+  color: var(--color-error);
+  font-size: var(--font-size-base);
+  margin: 5px 0;
 }
 
 .error-hint {
-    color: var(--color-text-muted);
-    font-size: var(--font-size-sm) !important;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm) !important;
 }
 
 /* Weather Forecast Styles */
+
 .weather-forecast {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -329,7 +347,7 @@ header p {
 
 .forecast-day .forecast-temps {
   font-weight: 500;
- color: var(--color-text-dark);
+  color: var(--color-text-dark);
 }
 
 /* Mobile: stack forecast vertically */
@@ -339,7 +357,10 @@ header p {
   }
 }
 
-/* Quotes Widget Styles */
+/* ===========================
+   Quotes Widget Styles
+   =========================== */
+
 .quotes-widget {
   background: var(--color-bg-white);
   padding: var(--space-md);
@@ -409,7 +430,10 @@ header p {
   }
 }
 
-/* Tasks Widget Styles */
+/* ===========================
+   Tasks Widget Styles
+   =========================== */
+
 .tasks-widget {
   background: var(--color-bg-white);
   padding: var(--space-md);
@@ -417,24 +441,169 @@ header p {
   box-shadow: var(--shadow-sm);
 }
 
+/* Form: top row text + category, bottom row date + submit */
 .task-form {
-  display: flex;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-areas:
+    "text category"
+    "date submit";
   gap: 10px;
   margin-bottom: 20px;
 }
 
-.task-form input[type="text"] {
-  flex: 1;
+/* Task text input */
+#task-input {
+  grid-area: text;
   padding: 10px;
   border: 1px solid var(--color-border);
   border-radius: 5px;
   font-size: var(--font-size-sm);
 }
 
-.task-form input[type="text"]:focus {
+#task-input:focus {
   outline: none;
   border-color: var(--color-accent);
 }
+
+/* Category dropdown */
+#task-category {
+  grid-area: category;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  font-size: var(--font-size-sm);
+  background: var(--color-bg-white);
+}
+
+/* Date input */
+#task-date {
+  grid-area: date;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  font-size: var(--font-size-sm);
+}
+
+/* Submit button */
+.task-form button[type="submit"] {
+  grid-area: submit;
+  padding: 10px 16px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  background: var(--color-accent);
+  color: #fff;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.task-form button[type="submit"]:hover {
+  background: #3182ce;
+  transform: translateY(-1px);
+}
+
+.task-form button[type="submit"]:active {
+  transform: translateY(0);
+}
+
+/* Mobile: stack form elements */
+@media (max-width: 600px) {
+  .task-form {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "text"
+      "category"
+      "date"
+      "submit";
+  }
+}
+
+/* Category filters */
+
+.category-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.category-filters button {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-white);
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.1s ease;
+}
+
+.category-filters button:hover {
+  background: var(--color-bg-light);
+  color: var(--color-text-dark);
+  transform: translateY(-1px);
+}
+
+/* Base active state */
+.category-filters button.active {
+  background: var(--color-accent);
+  color: #fff;
+  border-color: var(--color-accent);
+}
+
+/* Category-specific filter colors (inactive state) */
+.category-filters button[data-filter="work"] {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.category-filters button[data-filter="personal"] {
+  border-color: #f97316;
+  color: #f97316;
+}
+
+.category-filters button[data-filter="study"] {
+  border-color: #22c55e;
+  color: #22c55e;
+}
+
+.category-filters button[data-filter="other"] {
+  border-color: #eab308;
+  color: #eab308;
+}
+
+/* Category-specific active colors */
+.category-filters button.active[data-filter="work"] {
+  background: #667eea;
+  color: #fff;
+  border-color: #667eea;
+}
+
+.category-filters button.active[data-filter="personal"] {
+  background: #f97316;
+  color: #fff;
+  border-color: #f97316;
+}
+
+.category-filters button.active[data-filter="study"] {
+  background: #22c55e;
+  color: #fff;
+  border-color: #22c55e;
+}
+
+.category-filters button.active[data-filter="other"] {
+  background: #eab308;
+  color: #fff;
+  border-color: #eab308;
+}
+
+/* Task stats bar */
 
 .task-stats {
   display: flex;
@@ -456,14 +625,20 @@ header p {
   overflow-y: auto;
 }
 
+/* Task item: grid layout with two rows */
 .task-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "checkbox main delete"
+    "checkbox meta delete";
+  gap: 6px 10px;
   padding: var(--space-sm);
   border: 1px solid var(--color-border);
   border-radius: 5px;
   margin-bottom: 8px;
+  background: var(--color-bg-white);
   transition: background 0.2s ease;
 }
 
@@ -471,24 +646,31 @@ header p {
   background: var(--color-bg-light);
 }
 
+/* Checkbox on the left */
 .task-item input[type="checkbox"] {
+  grid-area: checkbox;
   width: 18px;
   height: 18px;
   cursor: pointer;
+  margin-top: 4px;
 }
 
+/* Main task text (first line) */
 .task-item .task-text {
-  flex: 1;
+  grid-area: main;
   font-size: var(--font-size-sm);
-  color: var(--color-text-dark);  
+  color: var(--color-text-dark);
 }
 
+/* Completed style */
 .task-item.completed .task-text {
   text-decoration: line-through;
   color: var(--color-text-muted);
 }
 
-.btn-delete {
+/* Delete button on the right */
+.task-item .btn-delete {
+  grid-area: delete;
   padding: 6px 12px;
   background: var(--color-error-border);
   color: white;
@@ -499,8 +681,54 @@ header p {
   transition: background 0.2s ease;
 }
 
-.btn-delete:hover {
+.task-item .btn-delete:hover {
   background: var(--color-error);
+}
+
+/* Meta container under main text */
+.task-meta {
+  grid-area: meta;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  font-size: 11px;
+}
+
+/* Category badge */
+.task-category {
+  padding: 2px 8px;
+  border-radius: 999px;
+  text-transform: capitalize;
+  color: #fff;
+}
+
+/* Category badge colors */
+.task-category.work {
+  background: #667eea;   /* purple */
+}
+
+.task-category.personal {
+  background: #f97316;   /* orange */
+}
+
+.task-category.study {
+  background: #22c55e;   /* green */
+}
+
+.task-category.other {
+  background: #eab308;   /* yellow */
+}
+
+/* Due date text */
+.task-date {
+  color: var(--color-text-muted);
+}
+
+/* Overdue tasks */
+.task-item.overdue {
+  border-left: 4px solid var(--color-error);
+  background: var(--color-error-bg);
 }
 
 .no-tasks {

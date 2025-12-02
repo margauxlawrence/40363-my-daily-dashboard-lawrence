@@ -58,12 +58,22 @@
                     <option value="work">Work</option>
                     <option value="personal">Personal</option>
                     <option value="study">Study</option>
+                    <option value="other">Other</option>
                 </select>
 
                 <input type="date" id="task-date">
-                
+
                 <button type="submit" class="btn-primary">Add Task</button>
                 </form>
+
+                <div class="category-filters">
+                    <button data-filter="all">All</button>
+                    <button data-filter="work">Work</button>
+                    <button data-filter="personal">Personal</button>
+                    <button data-filter="study">Study</button>
+                    <button data-filter="other">Other</button>
+                </div>
+
 
                 <!-- Task Statistics -->
                 <div id="task-stats" class="task-stats">
@@ -74,6 +84,8 @@
                 <div id="tasks-list" class="tasks-list">
                     <!-- Tasks will appear here -->
                 </div>
+
+            
             </div>
         </main>
     </div>
