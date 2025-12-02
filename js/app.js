@@ -306,6 +306,201 @@ function setupQuotesButton() {
 setupQuotesButton();
 
 // ========================================
+// MINI GAME WIDGET (Block Blast style)
+// ========================================
+
+function initBlockGame() {
+  const gridEl = document.getElementById('block-game-grid');
+  const newRowBtn = document.getElementById('block-game-new-row');
+  const scoreDisplay = document.getElementById('game-score-display');
+  const highScoreDisplay = document.getElementById('game-highscore-display');
+  const gameOverOverlay = document.getElementById('block-game-over');
+  const replayBtn = document.getElementById('block-game-replay');
+
+  if (!gridEl || !newRowBtn || !scoreDisplay || !highScoreDisplay || !gameOverOverlay || !replayBtn) return;
+
+  const cols = 8;
+  const rows = 10;
+  const colors = 5; // 0-4
+
+  let grid = [];
+  let score = 0;
+  let highScore = 0;
+  let gameOver = false;
+
+  // Load saved high score from localStorage
+  const savedHighScore = localStorage.getItem('blockGameHighScore');
+  if (savedHighScore) {
+    highScore = parseInt(savedHighScore, 10) || 0;
+  }
+
+  function updateScoreUI() {
+    scoreDisplay.textContent = String(score);
+  highScoreDisplay.textContent = String(highScore);
+  }
+
+  function resetGame() {
+    grid = Array.from({ length: rows }, () => Array(cols).fill(null));
+    score = 0;
+    gameOver = false;
+  gameOverOverlay.style.display = 'none';
+  updateScoreUI();
+    renderGrid();
+  }
+
+  function randomColor() {
+    return Math.floor(Math.random() * colors);
+  }
+
+  function addRow() {
+    if (gameOver) return;
+
+    // Check if adding a row would overflow
+    const topRowFilled = grid[0].some((cell) => cell !== null);
+    if (topRowFilled) {
+      handleGameOver();
+      return;
+    }
+
+    // Move everything up one row
+    for (let r = 0; r < rows - 1; r++) {
+      grid[r] = [...grid[r + 1]];
+    }
+
+    // New bottom row
+    grid[rows - 1] = Array.from({ length: cols }, () => randomColor());
+
+    renderGrid();
+  }
+
+  function renderGrid() {
+    gridEl.innerHTML = '';
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const color = grid[r][c];
+        const cell = document.createElement('div');
+        cell.classList.add('block-cell');
+
+        if (color === null) {
+          cell.classList.add('empty');
+        } else {
+          cell.classList.add(`color-${color}`);
+          cell.dataset.row = r;
+          cell.dataset.col = c;
+          cell.addEventListener('click', onCellClick);
+        }
+
+        const inner = document.createElement('div');
+        inner.classList.add('block-cell-inner');
+        cell.appendChild(inner);
+        gridEl.appendChild(cell);
+      }
+    }
+  }
+
+  function getGroup(row, col, color, visited) {
+    const key = `${row},${col}`;
+    if (
+      row < 0 ||
+      row >= rows ||
+      col < 0 ||
+      col >= cols ||
+      visited.has(key) ||
+      grid[row][col] !== color
+    ) {
+      return [];
+    }
+
+    visited.add(key);
+
+    let group = [[row, col]];
+    group = group.concat(getGroup(row - 1, col, color, visited));
+    group = group.concat(getGroup(row + 1, col, color, visited));
+    group = group.concat(getGroup(row, col - 1, color, visited));
+    group = group.concat(getGroup(row, col + 1, color, visited));
+
+    return group;
+  }
+
+  function onCellClick(e) {
+    if (gameOver) return;
+    const cell = e.currentTarget;
+    const row = parseInt(cell.dataset.row, 10);
+    const col = parseInt(cell.dataset.col, 10);
+    const color = grid[row][col];
+    if (color === null) return;
+
+    const group = getGroup(row, col, color, new Set());
+
+    // Only clear if group size >= 2 to make it more like block blast
+    if (group.length < 2) return;
+
+    // Clear blocks
+    group.forEach(([r, c]) => {
+      grid[r][c] = null;
+    });
+
+    // Apply gravity per column (blocks fall down)
+    for (let c = 0; c < cols; c++) {
+      const colValues = [];
+      for (let r = 0; r < rows; r++) {
+        if (grid[r][c] !== null) {
+          colValues.push(grid[r][c]);
+        }
+      }
+      const emptyCount = rows - colValues.length;
+      for (let r = 0; r < emptyCount; r++) {
+        grid[r][c] = null;
+      }
+      for (let r = 0; r < colValues.length; r++) {
+        grid[emptyCount + r][c] = colValues[r];
+      }
+    }
+
+    // Score: square of group size (encourages bigger groups)
+    score += group.length * group.length;
+
+    // Update high score if needed
+    if (score > highScore) {
+      highScore = score;
+      localStorage.setItem('blockGameHighScore', String(highScore));
+    }
+
+    updateScoreUI();
+
+    renderGrid();
+  }
+
+  function handleGameOver() {
+    gameOver = true;
+  // Show red overlay with replay button
+  gameOverOverlay.style.display = 'flex';
+  }
+
+  newRowBtn.addEventListener('click', () => {
+    if (gameOver) {
+      resetGame();
+    } else {
+      addRow();
+    }
+  });
+
+  replayBtn.addEventListener('click', () => {
+    resetGame();
+  });
+
+  // Initialize starting grid with a couple of rows so it's not empty
+  updateScoreUI();
+  resetGame();
+  addRow();
+  addRow();
+}
+
+// Initialize block game after DOM is ready
+window.addEventListener('load', initBlockGame);
+
+// ========================================
 // TASKS WIDGET (with categories + due dates + filters)
 // ========================================
 
